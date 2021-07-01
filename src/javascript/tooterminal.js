@@ -341,17 +341,25 @@ $(function() {
         }*/
     })
     .on('paste', (elem) => {
-
         if ($('.toot_media img').length >= 4) {
             return;
         }
 
-        if (typeof elem.originalEvent.clipboardData !== 'undefined'
-            && typeof elem.originalEvent.clipboardData.types !== 'undefined'
-            && elem.originalEvent.clipboardData.types.length === 1
-            && elem.originalEvent.clipboardData.types[0] === "Files"
-        ) {
-            let imageFile = elem.originalEvent.clipboardData.items[0].getAsFile();
+        if (typeof elem.originalEvent.clipboardData === 'undefined' ||
+            typeof elem.originalEvent.clipboardData.types === 'undefined') {
+            return;
+        }
+
+        let imageFile = undefined;
+        elem.originalEvent.clipboardData.types.find((value, index, obj) => {
+            if (value === 'Files') {
+                imageFile = elem.originalEvent.clipboardData.items[index].getAsFile();
+                return true;
+            }
+            return false;
+        });
+
+        if (imageFile !== undefined) {
             upload_img(imageFile);
         }
     })
@@ -1432,6 +1440,7 @@ function post_status() {
     status = status
         .replace(/(:[a-zA-Z0-9_]{2,}:) /g, '$1' + String.fromCharCode(8203))
         .replace(/ (:[a-zA-Z0-9_]{2,}:)/g, String.fromCharCode(8203) + '$1');
+    const idempotencyKey = String(status.getHashCode());
 
     let cw = $('#toot_cw').val().trim();
     let visibility = $('#toot_visibility').val();
@@ -1486,7 +1495,8 @@ function post_status() {
         url: 'https://' + _ins.domain + '/api/v1/statuses',
         type: 'POST',
         headers: {
-            Authorization: _ins.token_type + ' ' + _ins.access_token
+            Authorization: _ins.token_type + ' ' + _ins.access_token,
+            'Idempotency-Key': idempotencyKey
         },
         data: data,
         timeout: 5000
