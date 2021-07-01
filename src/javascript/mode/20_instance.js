@@ -1,7 +1,7 @@
 let InstanceModeElement = (function () {
     function InstanceModeElement() {
         this._cmd_mode = "global";
-        this._user_max = 9999999;
+        this._user_max = 99999999999999999999;
         this._list_max = 99999;
         this._sh_stats_opt = [
             {
@@ -1943,12 +1943,12 @@ let InstanceModeElement = (function () {
             if (line.length > 20) {
                 line = line.substr(0, 20) + '...';
             }
-            line = ('| ' + line + ' @' + data.acct).addTab(data.id, 9);
+            line = ('| ' + line + ' @' + data.acct).addTab(data.id, 20);
             return line;
         }, {
-            limit: 40,
+            limit: 80,
             header: ("Accounts:\n"
-                + ('| account name').addTab('id', 9)
+                + ('| account name').addTab('id', 20)
                 + "\n" + Array(35).join('-')),
             term: term,
             raw: false,

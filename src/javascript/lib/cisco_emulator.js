@@ -177,7 +177,9 @@ let ModeManager = (function () {
                         continue;
                     }
                     else {
-                        this.cmd_list[j].param = parseInt(stored);
+                        // 暫定
+                        // this.cmd_list[j].param = parseInt(stored);
+                        this.cmd_list[j].param = stored;
                         filter.push(this.cmd_list[j]);
                     }
                 }
